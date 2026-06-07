@@ -16,12 +16,29 @@ import datetime
 import requests
 
 # Dictionary mapping author-slug -> list of video URLs.
-# Pre-filled with a validated example for testing.
 SOURCES = {
     "ross-simmonds": [
-        "https://www.youtube.com/watch?v=VXxFJAg7YJw",
-        "https://www.youtube.com/watch?v=YDqpxuGkfhw",
-        "https://www.youtube.com/watch?v=SINviDvBPxA",
+        "https://www.youtube.com/watch?v=VXxFJAg7YJw",  # Content Distribution in the Age of AI (nov 2025)
+        "https://www.youtube.com/watch?v=YDqpxuGkfhw",  # SEOs Who Ignore Distribution Will Fall Behind (feb 2026)
+        # SINviDvBPxA returned 503 from Supadata — skipping it
+    ],
+    "wil-reynolds": [
+        "https://www.youtube.com/watch?v=YVaRBvNXg6o",  # Obsessed With the Wrong AI Metric (feb 2026)
+        "https://www.youtube.com/watch?v=NCk5sb0bLIo",  # The "Other" AI Hurting Your Organic Traffic (mar 2025)
+    ],
+    "nathan-gotch": [
+        "https://www.youtube.com/watch?v=4BSMNFNhY_E",  # Breaking Through SEO with AI (oct 2025)
+        "https://www.youtube.com/watch?v=7mtCa8sqjBo",  # AI Changed SEO Forever (sep 2025)
+        "https://www.youtube.com/watch?v=XzVlQNQ3n7g",  # AI SEO & GEO: Ultimate Checklist for 2026 (jul 2025)
+    ],
+    "aleyda-solis": [
+        "https://www.youtube.com/watch?v=vX0QA2p5onM",  # How to Rank in Google AI Overviews (SGE)
+        "https://www.youtube.com/watch?v=lEtXlk0XTsI",  # Traditional SEO vs AI Search Optimization (GEO, AEO)
+        "https://www.youtube.com/watch?v=N1Eup1sH1fQ",  # The Great Organic Traffic Decoupling & What to do about it
+    ],
+    "sam-oh": [
+        "https://www.youtube.com/watch?v=W3Fq5wiAAcw",  # AEO Course: How AI Search Engines Work
+        "https://www.youtube.com/watch?v=E0VFNbZtZKM",  # AEO Course: Brand Gap Analysis
     ],
 }
 
