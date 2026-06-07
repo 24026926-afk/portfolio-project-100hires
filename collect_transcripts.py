@@ -144,14 +144,40 @@ def main():
                 "x-api-key": api_key
             }
 
+            # Polite delay before processing this video
+            time.sleep(1.0)
+
+            max_retries = 3
+            backoff_factor = 2.0
+            response = None
+            success = False
+
             try:
-                # Polite delay
-                time.sleep(1.0)
-                
-                response = requests.get(endpoint, params=params, headers=headers, timeout=15)
-                
-                if response.status_code != 200:
-                    print(f"[ERROR] {author_slug}: {video_id} failed with HTTP status {response.status_code}")
+                for attempt in range(1, max_retries + 1):
+                    try:
+                        # Increased timeout to 30 seconds to handle slower transcription responses
+                        response = requests.get(endpoint, params=params, headers=headers, timeout=30)
+                        
+                        if response.status_code == 200:
+                            success = True
+                            break
+                        elif response.status_code in [429, 500, 502, 503, 504]:
+                            sleep_time = backoff_factor ** attempt
+                            print(f"[RETRY] {author_slug}: {video_id} failed with HTTP status {response.status_code}. Retrying in {sleep_time:.1f}s (attempt {attempt}/{max_retries})...")
+                            time.sleep(sleep_time)
+                        else:
+                            # 400, 401, 403, 404, etc. - non-transient
+                            break
+                    except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as te:
+                        if attempt == max_retries:
+                            raise
+                        sleep_time = backoff_factor ** attempt
+                        print(f"[RETRY] {author_slug}: {video_id} connection issue/timeout: {te}. Retrying in {sleep_time:.1f}s (attempt {attempt}/{max_retries})...")
+                        time.sleep(sleep_time)
+
+                if not success:
+                    status_code = response.status_code if response is not None else "Unknown"
+                    print(f"[ERROR] {author_slug}: {video_id} failed with HTTP status {status_code}")
                     error_count += 1
                     continue
 
